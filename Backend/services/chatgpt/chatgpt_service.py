@@ -25,8 +25,8 @@ class ChatGPTService:
             )
             return response.choices[0].text.strip()
         except openai.error.OpenAIError as e:
-            # Handle OpenAI specific errors
+            # TODO Handle OpenAI specific errors
             raise e
         except Exception as e:
-            # Handle other exceptions
+            # TODO Handle other exceptions
             raise e

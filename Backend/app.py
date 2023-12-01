@@ -1,6 +1,6 @@
 
 import os
-from aws_cdk import core as cdk
+import aws_cdk as cdk
 
 from backend.backend_stack import BackendStack
 
