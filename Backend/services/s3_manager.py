@@ -1,5 +1,6 @@
 import boto3
 from botocore.exceptions import ClientError
+import os
 
 class S3Manager:
     def __init__(self):
@@ -11,11 +12,11 @@ class S3Manager:
         Upload a file to an S3 bucket
 
         :param file_path: File to upload
-        :param object_name: S3 object name. If not specified, file_path is used
+        :param object_name: S3 object name. If not specified, only the file name is used
         :return: True if file was uploaded, else False
         """
         if object_name is None:
-            object_name = file_path
+            object_name = os.path.basename(file_path)  # Extracts file name from file_path
 
         try:
             self.s3_client.upload_file(file_path, self.bucket_name, object_name)

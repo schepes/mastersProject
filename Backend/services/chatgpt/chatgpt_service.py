@@ -1,5 +1,3 @@
-# Backend/services/chatgpt/chatgpt_service.py
-
 import openai
 import os
 

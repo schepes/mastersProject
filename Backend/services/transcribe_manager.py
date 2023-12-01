@@ -1,6 +1,7 @@
 import boto3
 import time
 import requests
+import os
 
 class TranscribeManager:
     """
@@ -17,12 +18,16 @@ class TranscribeManager:
         :param audio_file_uri: The URI of the audio file in S3 to be transcribed.
         :param job_name: A unique name for the transcription job.
         :param language_code: Language code for the transcription (default is 'en-US').
-        :return: Transcription text as a string if the job is completed successfully, else None.
+        :return: None
         """
+        # Extract the file extension and use it as the media format
+        _, file_extension = os.path.splitext(audio_file_uri)
+        media_format = file_extension.lstrip('.').lower()
+
         self.transcribe_client.start_transcription_job(
             TranscriptionJobName=job_name,
             Media={'MediaFileUri': audio_file_uri},
-            MediaFormat='mp3',  # Adjust according to your audio file format
+            MediaFormat=media_format,
             LanguageCode=language_code
         )
 
