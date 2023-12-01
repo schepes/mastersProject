@@ -1,15 +1,12 @@
-from aws_cdk import (
-    # Duration,
-    Stack,
-    # aws_sqs as sqs,
-)
+from aws_cdk import core as cdk
 from constructs import Construct
 
-class BackendStack(Stack):
+class BackendStack(cdk.Stack): 
 
     def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
         super().__init__(scope, construct_id, **kwargs)
 
+        print ('hello')
         # The code that defines your stack goes here
 
         # example resource

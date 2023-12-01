@@ -1,7 +1,6 @@
-#!/usr/bin/env python3
-import os
 
-import aws_cdk as cdk
+import os
+from aws_cdk import core as cdk
 
 from backend.backend_stack import BackendStack
 

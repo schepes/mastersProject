@@ -1,3 +1,5 @@
+#Help me import aws cdk and App correctly
+import os
 import aws_cdk as core
 import aws_cdk.assertions as assertions
 
