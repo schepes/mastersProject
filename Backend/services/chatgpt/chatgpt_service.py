@@ -11,7 +11,7 @@ class ChatGPTService:
             raise ValueError("No OPENAI_API_KEY environment variable set.")
         openai.api_key = self.api_key
 
-    def get_response(self, prompt, max_tokens=150):
+    def get_response(self, prompt, max_tokens=1000):
         """
         Send a prompt to the OpenAI API and return the response.
         """
