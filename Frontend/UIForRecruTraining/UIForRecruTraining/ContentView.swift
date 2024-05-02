@@ -14,9 +14,10 @@ struct ContentView: View {
         let appearance = UITabBarAppearance()
         appearance.backgroundColor = UIColor(red: 0.04, green: 0.27, blue: 0.6, alpha: 1)
         
+        appearance.stackedLayoutAppearance.normal.iconColor = UIColor.white 
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
-        UITabBar.appearance().unselectedItemTintColor = UIColor.white
+     
     }
 
     var body: some View {
@@ -25,7 +26,7 @@ struct ContentView: View {
                 .tabItem {
                     Image("ic-settings")
                         .renderingMode(.template)
-                        .foregroundColor(selectedTab == "settings" ? Color("AccentColor") : Color.white)
+                        .foregroundColor(.white)
                 }
                 .tag("settings")
 

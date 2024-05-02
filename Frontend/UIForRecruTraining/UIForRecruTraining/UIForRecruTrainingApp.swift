@@ -9,9 +9,21 @@ import SwiftUI
 
 @main
 struct UIForRecruTrainingApp: App {
+    
+    @ObservedObject var appState: AppState = AppState()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            if appState.isLoggedIn {
+                NavigationStack(path: $appState.navigationPath){
+                    ChatListView()
+                        .environmentObject(appState)
+                }
+                //ContentView()
+            } else{
+                AuthView()
+                    .environmentObject(appState)
+            }
         }
     }
 }

@@ -1,17 +1,17 @@
 {
   "images" : [
     {
-      "filename" : "cil_chat-bubble.png",
+      "filename" : "mingcute_information-fill.png",
       "idiom" : "universal",
       "scale" : "1x"
     },
     {
-      "filename" : "cil_chat-bubble@2x.png",
+      "filename" : "mingcute_information-fill@2x.png",
       "idiom" : "universal",
       "scale" : "2x"
     },
     {
-      "filename" : "cil_chat-bubble@3x.png",
+      "filename" : "mingcute_information-fill@3x.png",
       "idiom" : "universal",
       "scale" : "3x"
     }
@@ -19,8 +19,5 @@
   "info" : {
     "author" : "xcode",
     "version" : 1
-  },
-  "properties" : {
-    "template-rendering-intent" : "template"
   }
 }
