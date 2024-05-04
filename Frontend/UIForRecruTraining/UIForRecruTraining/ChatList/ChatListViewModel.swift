@@ -18,12 +18,6 @@ class ChatListViewModel : ObservableObject {
     
     private let db = Firestore.firestore()
     func fetchData(user: String?) {
-//        self.chats = [
-//            AppChat(id: "1", topic: "Some topic", model: .gpt3_5_turbo, lastMessageSent: Date(), owner: "123"),
-//            AppChat(id: "2", topic: "Some other topic", model: .gpt4, lastMessageSent: Date(), owner: "123")
-//        ]
-//        self.loadingState = .resultFound
-        
         if loadingState == .none {
             loadingState = .loading
             db.collection("chats").whereField("owner", isEqualTo: user ?? "").addSnapshotListener { [weak self] querySnapshot, error in
@@ -68,7 +62,7 @@ enum ChatListState {
 
 struct AppChat: Codable, Identifiable {
     @DocumentID var id: String?
-    let topic: String?
+    var topic: String?
     var model: ChatModel?
     let lastMessageSent: FirestoreDate
     let owner: String

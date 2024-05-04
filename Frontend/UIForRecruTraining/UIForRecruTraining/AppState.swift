@@ -18,9 +18,20 @@ class AppState: ObservableObject {
     var isLoggedIn: Bool {
         return currentUser != nil
     }
+
+    func logout() {
+        do {
+            try Auth.auth().signOut()
+            currentUser = nil
+        } catch let signOutError as NSError {
+            print("Error signing out: %@", signOutError)
+        }
+    }
     
     init(){
-        FirebaseApp.configure()
+        if FirebaseApp.app() == nil {
+            FirebaseApp.configure()
+        }
         
         if let currentUser = Auth.auth().currentUser {
             self.currentUser = currentUser

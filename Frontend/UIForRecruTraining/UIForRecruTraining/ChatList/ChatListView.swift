@@ -52,13 +52,13 @@ struct ChatListView: View {
                 }
             }
         }
-        .navigationTitle("Chats")
+        .navigationTitle("Chat History")
         .toolbar(content: {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem(placement: .navigationBarLeading) {
                 Button {
                     viewModel.showProfile()
                 } label:{
-                    Image(systemName: "person")
+                    Image("ic-settings-medium")
                 }
                 
             }
@@ -74,13 +74,14 @@ struct ChatListView: View {
 
                     }
                 } label:{
-                    Image(systemName: "square.and.pencil")
+                    Image("ic-write-pad-blue")
                 }
                 
             }
         })
         .sheet(isPresented: $viewModel.isShowingProfileView){
-            ProfileView()
+            SettingsView()
+                .environmentObject(appState)
         }
         .navigationDestination(for: String.self, destination: {chatId in
             ChatView2(viewModel: .init(chatId: chatId))
@@ -95,4 +96,5 @@ struct ChatListView: View {
 
 #Preview {
     ChatListView()
+        .environmentObject(AppState())
 }

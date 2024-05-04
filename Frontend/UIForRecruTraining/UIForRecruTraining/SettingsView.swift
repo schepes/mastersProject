@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SettingsView: View {
+    @EnvironmentObject var appState: AppState
     var body: some View {
         
         VStack {
@@ -55,7 +56,7 @@ struct SettingsView: View {
                     HStack {
                         
                         Button (action: {
-                            print("Logout tapped")
+                            appState.logout()
                         }){
                             HStack {
                                 Text("Logout")
