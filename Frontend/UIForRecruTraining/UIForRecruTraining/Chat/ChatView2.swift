@@ -229,6 +229,7 @@ struct ChatView2: View {
             DispatchQueue.main.async {
                 if let transcription = transcription {
                     viewModel.messageText = transcription
+                    updateInputHeight()
                 }
             }
         }
