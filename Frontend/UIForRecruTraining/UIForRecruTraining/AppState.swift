@@ -5,6 +5,7 @@
 //  Created by Diego Bobrow on 5/1/24.
 //
 
+
 import Foundation
 import FirebaseAuth
 import SwiftUI
@@ -15,14 +16,23 @@ class AppState: ObservableObject {
     @Published var navigationPath = NavigationPath()
     
     
+    func storeRememberMe(remember: Bool) {
+        UserDefaults.standard.set(remember, forKey: "rememberMe")
+    }
+    
+    func loadRememberMe() -> Bool {
+        return UserDefaults.standard.bool(forKey: "rememberMe")
+    }
+    
     var isLoggedIn: Bool {
         return currentUser != nil
     }
-
+    
     func logout() {
         do {
             try Auth.auth().signOut()
             currentUser = nil
+            storeRememberMe(remember: false)
         } catch let signOutError as NSError {
             print("Error signing out: %@", signOutError)
         }
@@ -33,8 +43,11 @@ class AppState: ObservableObject {
             FirebaseApp.configure()
         }
         
-        if let currentUser = Auth.auth().currentUser {
+        let rememberMe = loadRememberMe()
+        if rememberMe, let currentUser = Auth.auth().currentUser {
             self.currentUser = currentUser
+        } else {
+            self.currentUser = nil
         }
     }
 }

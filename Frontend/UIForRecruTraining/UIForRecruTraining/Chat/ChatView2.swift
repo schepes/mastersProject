@@ -11,6 +11,11 @@ struct ChatView2: View {
     @StateObject var viewModel: ChatViewModel2
     @State private var inputHeight: CGFloat = 18
     @Environment(\.presentationMode) var presentationMode
+    @StateObject var audioRecorder = AudioRecorder()
+    @StateObject var speechRecognizer = SpeechRecognizer()
+    @State private var secondsElapsed = 0
+    @State private var recordingTimer: Timer?
+    @State private var showingTimer = false
     private let maxInputHeight: CGFloat = UIScreen.main.bounds.height / 3
     var body: some View {
         VStack {
@@ -57,6 +62,9 @@ struct ChatView2: View {
                 }
         .onAppear {
             viewModel.fetchData()
+        }
+        .onTapGesture {
+            self.dismissKeyboard()
         }
     }
     var newChatButton: some View {
@@ -121,15 +129,34 @@ struct ChatView2: View {
     
     var messageInputView: some View {
             HStack {
-                Image("ic-microphone")
+                VStack{
+                    if showingTimer {
+                        Text("Recording: \(secondsElapsed) sec")
+                            
+                            .background(Color.red)
+                            .foregroundColor(.white)
+                            .clipShape(Capsule())
+                    }
+                    Button(action: {}) { // Empty action to maintain the button's clickable behavior.
+                        Image("ic-microphone")
+                        
+                    }
+                    .onLongPressGesture(minimumDuration: .infinity, maximumDistance: .infinity, pressing: { isPressing in
+                        if isPressing {
+                            startRecording() // Start recording when button is pressed
+                        } else {
+                            stopRecording()  // Stop when released
+                        }
+                    }, perform: {})
                     .padding()
-                ZStack(alignment: .topLeading) {
+                }
 
+                ZStack(alignment: .topLeading) {
                     TextEditor(text: $viewModel.messageText)
                         .font(.chatMessage)
-                        .frame(minHeight: inputHeight, maxHeight: 30)
+                        .frame(minHeight: 36, maxHeight: inputHeight)
                         .padding(10)
-                        .scrollContentBackground(.hidden)
+                        .scrollContentBackground(.hidden) // Restoring this property
                         .background(Color.gray.opacity(0.1))
                         .cornerRadius(25)
                         .overlay(
@@ -138,20 +165,18 @@ struct ChatView2: View {
                                 .stroke(Color.gray.opacity(0.1), lineWidth: 1)
                         )
                         .onChange(of: viewModel.messageText) { _ in
-                            inputHeight = self.heightForTextEditor()
+                            updateInputHeight()
                         }
                     
                     if viewModel.messageText.isEmpty {
-                                       Text("Message")
-                                           .foregroundColor(.gray)
-                                           .padding(15)
-                                           .font(.chatMessage)
-                                   }
-                    
+                        Text("Message")
+                            .foregroundColor(.gray)
+                            .padding(18)
+                            .font(.chatMessage)
+                    }
                 }
+                
 
-                
-                
                 Button(action: sendMessage) {
                     Text("Send")
                         .padding()
@@ -163,16 +188,52 @@ struct ChatView2: View {
             }
             .padding()
         }
+
+        private func updateInputHeight() {
+            let newSize = heightForTextEditor(text: viewModel.messageText)
+            if newSize > inputHeight && newSize < maxInputHeight {
+                inputHeight = newSize
+            } else if newSize < inputHeight {
+                inputHeight = max(18, newSize)  // Reset to min height if text is removed
+            }
+        }
+
+        private func heightForTextEditor(text: String) -> CGFloat {
+            let textView = UITextView()
+            textView.text = text
+            textView.font = UIFont.systemFont(ofSize: 16)  // Adjust the font size as per your design
+            let size = CGSize(width: UIScreen.main.bounds.width - 150, height: CGFloat.infinity)
+            let estimatedSize = textView.sizeThatFits(size)
+            return estimatedSize.height
+        }
+
     
-    private func heightForTextEditor() -> CGFloat {
-        let width: CGFloat = UIScreen.main.bounds.width - 150 // Adjust the width as per side paddings
-        let textView = UITextView()
-        textView.font = UIFont.systemFont(ofSize: 16, weight: .regular) // Match SwiftUI font
-        textView.text = viewModel.messageText
-        let size = CGSize(width: width, height: .infinity)
-        let estimatedSize = textView.sizeThatFits(size)
-        return max(36, min(estimatedSize.height, maxInputHeight)) // Maximum height condition
+    
+    func startRecording() {
+        audioRecorder.setupRecorder()
+        audioRecorder.startRecording()
+        showingTimer = true
+        secondsElapsed = 0
+        recordingTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+            self.secondsElapsed += 1
+        }
     }
+
+    func stopRecording() {
+        audioRecorder.stopRecording()
+        recordingTimer?.invalidate()
+        recordingTimer = nil
+        showingTimer = false
+        let recordedFileURL = audioRecorder.audioRecorder.url
+        speechRecognizer.transcribeAudio(from: recordedFileURL) { transcription in
+            DispatchQueue.main.async {
+                if let transcription = transcription {
+                    viewModel.messageText = transcription
+                }
+            }
+        }
+    }
+    
     func sendMessage() {
         Task {
             do {
@@ -182,6 +243,8 @@ struct ChatView2: View {
             }
         }
     }
+    
+    
 }
 
 #Preview {

@@ -1,3 +1,4 @@
+
 //
 //  AuthView.swift
 //  UIForRecruTraining
@@ -28,6 +29,12 @@ struct AuthView: View {
                     .font(.appTitle)
                     .foregroundColor(Color("MainColor"))
                 
+                if !authViewModel.errorMessage.isEmpty {
+                    Text(authViewModel.errorMessage)
+                        .foregroundColor(.red)
+                        .font(.callout)
+                        .fixedSize(horizontal: false, vertical: true)  // Allows text to wrap in the view
+                }
                 
                 ZStack(alignment: .topLeading) {
                     RoundedRectangle(cornerRadius: 10) // Adjusted corner radius
@@ -104,56 +111,76 @@ struct AuthView: View {
                                     .foregroundColor(Color("MainColor"))
                                 
                             }
+                            .padding(30)
+                            .padding(.vertical, 10)
                         }
                         
                         Spacer()
                         
-                        Button("Forgot password")
-                        {
-                            // Handle forgot password action
+                        if authViewModel.userExists == true && authViewModel.isPasswordVisible {
+                            Button("Forgot password") {
+                                // Handle forgot password action
+                            }
+                            .font(.boldFourteen)
+                            .foregroundColor(Color("MainColor"))
+                            .padding(.horizontal, 30)
+                            .frame(height: 100)
                         }
-                        .font(.boldFourteen)
-                        .foregroundColor(Color("MainColor")) // Adjust to match your color scheme
+                        
                     }
-                    .padding(.horizontal, 30)
-                    .frame(height: 100)
                 }
-
-                
-
-                
-                NavigationLink(destination: ContentView(), isActive: $shouldNavigate) { EmptyView() }
                 
                 Button(action: {
-                    authViewModel.authenticate(appState: appState)
+                    if authViewModel.isPasswordVisible {
+                        authViewModel.authenticateOrRegister(appState: appState, rememberMe: rememberMe)
+                    } else {
+                        authViewModel.checkExistenceOrProceed()
+                    }
                 }) {
                     ZStack{
                         Image("bt-sign-in")
-                        
-                        Text(authViewModel.userExists ? "Sign In" : "Create User")
+                        Text(authViewModel.userExists == true ? "Sign In" : "Sign Up")
                             .font(.boldEitheen)
                             .foregroundColor(Color("Background"))
                     }
                 }
+                if authViewModel.isPasswordVisible && authViewModel.userExists == true {
+                    HStack{
+                        Text("Don't have an account? ")
+                            .font(.loginInfo)
+                            .foregroundColor(Color("MainColor"))
+                        
+                        Button("Sign Up") {
+                            authViewModel.resetForSignUp()
+                        }
+                        .font(.boldFourteen)
+                        .foregroundColor(Color("MainColor"))
+                    }
+                    .padding()
+                }
                 
-//                HStack{
-//                    Text("Don't have an account? ")
-//                        .font(.loginInfo)
-//                        .foregroundColor(Color("MainColor"))
-//                    
-//                    Button("Sign Up")
-//                    {
-//                        
-//                    }
-//                    .font(.boldFourteen)
-//                    .foregroundColor(Color("MainColor"))
-//                }
-//                .padding()
+                if authViewModel.isPasswordVisible && authViewModel.userExists == false {
+                    HStack{
+                        Text("Already have an account? ")
+                            .font(.loginInfo)
+                            .foregroundColor(Color("MainColor"))
+                        
+                        Button("Sign In") {
+                            authViewModel.resetForSignIn()
+                        }
+                        .font(.boldFourteen)
+                        .foregroundColor(Color("MainColor"))
+                    }
+                    .padding()
+                }
                 
                 Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color("Background"))
+            .onTapGesture {
+                    self.dismissKeyboard()
+                }
         }
     }
 }
@@ -161,3 +188,4 @@ struct AuthView: View {
 #Preview {
     AuthView()
 }
+

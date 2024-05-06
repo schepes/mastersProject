@@ -91,8 +91,8 @@ struct AppChat: Codable, Identifiable {
 }
 
 enum ChatModel: String, Codable, CaseIterable, Hashable {
-    case gpt3_5_turbo = "GPT 3.5 Turbo"
-    case gpt4 = "GPT 4"
+    case gpt3_5_turbo = "Hercules Model"
+    case gpt4 = "Zeus Model"
     
     var tintColor : Color {
         switch self {
